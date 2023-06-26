@@ -14,24 +14,34 @@ provider "aws" {
 
 data "aws_ami" "debian" {
   most_recent = true
-  owners      = ["679593333241"] # Canonical
+  owners      = ["136693071363"] # https://wiki.debian.org/Cloud/AmazonEC2Image/Bullseye
 
   filter {
     name   = "name"
-    values = ["debian-10-amd64-*"]
+    values = ["debian-11-amd64-*"]
   }
 }
 
-resource "aws_instance" "test" {
-  ami           = data.aws_ami.debian.id
-  instance_type = "t3.micro"
+resource "aws_vpc" "default" {
+  cidr_block = "10.0.0.0/16"
+}
 
-  tags = {
-    Name = "test"
-  }
+resource "aws_subnet" "default" {
+  vpc_id     = aws_vpc.default.id
+  cidr_block = "10.0.1.0/24"
+}
+
+resource "aws_instance" "test" {
+    provider = aws.eu-west-1
+    ami = data.aws_ami.debian.id
+    instance_type = "t3.micro"
+    subnet_id     = aws_subnet.default.id
+    tags = {
+        Name = "test"
+    }
 
   ebs_block_device {
-    device_name = "/dev/sda1"
+    device_name = "/dev/xvdf"
     volume_type = "gp3"
     volume_size = 10
   }
@@ -42,6 +52,7 @@ resource "aws_instance" "test" {
 resource "aws_security_group" "allow_http_https" {
   name        = "allow_http_https"
   description = "Allow HTTP and HTTPS traffic"
+  vpc_id      = aws_vpc.default.id
 
   ingress {
     description = "HTTP"
