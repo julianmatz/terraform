@@ -31,23 +31,23 @@ resource "aws_subnet" "default" {
   cidr_block = "10.0.1.0/24"
 }
 
-resource "aws_instance" "test" {
-    provider = aws.eu-west-1
-    ami = data.aws_ami.debian.id
-    instance_type = "t3.micro"
-    subnet_id     = aws_subnet.default.id
-    tags = {
-        Name = "test"
-    }
+#resource "aws_instance" "test" {
+#    provider = aws.eu-west-1
+#    ami = data.aws_ami.debian.id
+#    instance_type = "t3.micro"
+#    subnet_id     = aws_subnet.default.id
+#    tags = {
+#        Name = "test"
+#    }
 
-  ebs_block_device {
-    device_name = "/dev/xvdf"
-    volume_type = "gp3"
-    volume_size = 10
-  }
+#  ebs_block_device {
+#    device_name = "/dev/xvdf"
+#    volume_type = "gp3"
+#    volume_size = 10
+#  }
 
-  vpc_security_group_ids = [aws_security_group.allow_http_https.id]
-}
+#  vpc_security_group_ids = [aws_security_group.allow_http_https.id]
+#}
 
 resource "aws_security_group" "allow_http_https" {
   name        = "allow_http_https"
