@@ -77,3 +77,12 @@ resource "aws_security_group" "allow_http_https" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+output "instance_details" {
+  value = {
+    instance_id = aws_instance.test.id
+    public_ip   = aws_instance.test.public_ip
+    private_ip   = aws_instance.test.private_ip
+  }
+  description = "EC2 instance details"
+}
