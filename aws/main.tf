@@ -1,7 +1,14 @@
 terraform {
+  backend "remote" {
+    organization = "Cirrus-Invicta"
+
+    workspaces {
+      name = "terraform"
+    }
+  }
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "5.5.0"
     }
   }
@@ -27,11 +34,11 @@ data "aws_ami" "debian" {
 ## NETWORKS
 
 module "network" {
-  source       = "./modules/network"
-  vpc_cidr     = "10.0.0.0/16"
-  vpc_name     = "terraform-default-vpc"
-  subnet_cidr  = "10.0.1.0/24"
-  subnet_name  = "terraform-default-subnet"
+  source      = "./modules/network"
+  vpc_cidr    = "10.0.0.0/16"
+  vpc_name    = "terraform-default-vpc"
+  subnet_cidr = "10.0.1.0/24"
+  subnet_name = "terraform-default-subnet"
 }
 
 ## SECURITY GROUPS
@@ -42,7 +49,7 @@ module "http_https_sg" {
   sg_name        = "allow-http-https"
   sg_description = "Allow inbound HTTP and HTTPS traffic"
   vpc_id         = module.network.vpc_id
-  
+
   ingress_rules = [
     {
       description = "HTTPS"

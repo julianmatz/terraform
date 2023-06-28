@@ -1,14 +1,14 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "5.5.0"
     }
   }
 }
 
 provider "aws" {
-  alias = "eu-west-1"
+  alias  = "eu-west-1"
   region = "eu-west-1"
 }
 
@@ -32,13 +32,13 @@ resource "aws_subnet" "default" {
 }
 
 resource "aws_instance" "test" {
-    provider = aws.eu-west-1
-    ami = data.aws_ami.debian.id
-    instance_type = "t3.micro"
-    subnet_id     = aws_subnet.default.id
-    tags = {
-        Name = "test"
-    }
+  provider      = aws.eu-west-1
+  ami           = data.aws_ami.debian.id
+  instance_type = "t3.micro"
+  subnet_id     = aws_subnet.default.id
+  tags = {
+    Name = "test"
+  }
 
   ebs_block_device {
     device_name = "/dev/xvdf"
@@ -82,7 +82,7 @@ output "instance_details" {
   value = {
     instance_id = aws_instance.test.id
     public_ip   = aws_instance.test.public_ip
-    private_ip   = aws_instance.test.private_ip
+    private_ip  = aws_instance.test.private_ip
   }
   description = "EC2 instance details"
 }
