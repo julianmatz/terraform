@@ -27,7 +27,7 @@ data "aws_ami" "debian" {
 ## NETWORKS
 
 module "network" {
-  source       = "../modules/network"
+  source       = "./modules/network"
   vpc_cidr     = "10.0.0.0/16"
   vpc_name     = "terraform-default-vpc"
   subnet_cidr  = "10.0.1.0/24"
@@ -37,7 +37,7 @@ module "network" {
 ## SECURITY GROUPS
 
 module "http_https_sg" {
-  source = "../modules/security"
+  source = "./modules/security"
 
   sg_name        = "allow-http-https"
   sg_description = "Allow inbound HTTP and HTTPS traffic"
@@ -62,7 +62,7 @@ module "http_https_sg" {
 }
 
 module "ssh_sg" {
-  source = "../modules/security"
+  source = "./modules/security"
 
   sg_name        = "allow-ssh"
   sg_description = "Allow inbound SSH traffic"
