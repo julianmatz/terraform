@@ -79,8 +79,8 @@ module "ssh_sg" {
   ingress_rules = [
     {
       description = "SSH"
-      from_port   = 2223
-      to_port     = 2223
+      from_port   = 22
+      to_port     = 22
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     }
