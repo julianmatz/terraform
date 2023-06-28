@@ -19,7 +19,7 @@ variable "key_name" {
   default     = "devops"
 }
 
-variable "storage_size" {
+variable "volume_size" {
   description = "The size of the EBS volume in gigabytes"
   type        = number
   default     = 8  # default is 8 GB, but this should be adjusted based on your needs
