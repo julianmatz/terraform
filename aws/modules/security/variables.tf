@@ -1,23 +1,3 @@
-variable "vpc_cidr" {
-  description = "CIDR block for the VPC"
-  type        = string
-}
-
-variable "vpc_name" {
-  description = "VPC name to be used on all the resources as identifier"
-  type        = string
-}
-
-variable "subnet_cidr" {
-  description = "CIDR block for the subnet"
-  type        = string
-}
-
-variable "subnet_name" {
-  description = "Subnet name to be used on all the resources as identifier"
-  type        = string
-}
-
 variable "sg_name" {
   description = "The name of the security group"
   type        = string

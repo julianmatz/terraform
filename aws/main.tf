@@ -37,7 +37,7 @@ module "network" {
 ## SECURITY GROUPS
 
 module "http_https_sg" {
-  source = "../modules/network"
+  source = "../modules/security"
 
   sg_name        = "allow-http-https"
   sg_description = "Allow inbound HTTP and HTTPS traffic"
@@ -62,7 +62,7 @@ module "http_https_sg" {
 }
 
 module "ssh_sg" {
-  source = "../modules/network"
+  source = "../modules/security"
 
   sg_name        = "allow-ssh"
   sg_description = "Allow inbound SSH traffic"
@@ -81,6 +81,7 @@ module "ssh_sg" {
 
 ## COMPUTE INSTANCES
 
+/*
 module "postgres" {
   source              = "../modules/compute"
   ami                 = data.aws_ami.debian.id
@@ -100,3 +101,4 @@ module "ui_backend" {
   volume_size         = 10
   security_group_id   = aws_security_group.allow_http_https.id
 }
+*/
