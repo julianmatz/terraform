@@ -34,10 +34,55 @@ module "network" {
   subnet_name  = "terraform-default-subnet"
 }
 
+## SECURITY GROUPS
+
+module "http_https_sg" {
+  source = "../modules/network"
+
+  sg_name        = "allow-http-https"
+  sg_description = "Allow inbound HTTP and HTTPS traffic"
+  vpc_id         = module.vpc.vpc_id
+  
+  ingress_rules = [
+    {
+      description = "HTTPS"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    },
+    {
+      description = "HTTP"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
+}
+
+module "ssh_sg" {
+  source = "../modules/network"
+
+  sg_name        = "allow-ssh"
+  sg_description = "Allow inbound SSH traffic"
+  vpc_id         = module.vpc.vpc_id
+
+  ingress_rules = [
+    {
+      description = "SSH"
+      from_port   = 2223
+      to_port     = 2223
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
+}
+
 ## COMPUTE INSTANCES
 
 module "postgres" {
-  source              = "../modules/ec2_db"
+  source              = "../modules/compute"
   ami                 = data.aws_ami.debian.id
   instance_type       = "t3.medium"
   subnet_id           = aws_subnet.default.id
@@ -47,7 +92,7 @@ module "postgres" {
 }
 
 module "ui_backend" {
-  source              = "../modules/ec2_ui"
+  source              = "../modules/compute"
   ami                 = data.aws_ami.debian.id
   instance_type       = "t3.micro"
   subnet_id           = aws_subnet.default.id
