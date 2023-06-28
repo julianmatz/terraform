@@ -22,7 +22,7 @@ variable "key_name" {
 variable "volume_size" {
   description = "The size of the EBS volume in gigabytes"
   type        = number
-  default     = 8  # default is 8 GB, but this should be adjusted based on your needs
+  default     = 8 # default is 8 GB, but this should be adjusted based on your needs
 }
 
 variable "throughput" {
@@ -57,4 +57,10 @@ variable "roles" {
 variable "security_group_ids" {
   description = "List of IDs of the security groups to associate with the instance"
   type        = list(string)
+}
+
+variable "create_eip" {
+  description = "Whether to create an EIP for this instance"
+  type        = bool
+  default     = false
 }

@@ -23,3 +23,18 @@ resource "aws_instance" "default" {
 
   vpc_security_group_ids = var.security_group_ids
 }
+
+resource "aws_eip" "eip" {
+  count = var.create_eip ? 1 : 0
+  vpc   = true
+
+  tags = {
+    Name = "${var.instance_name}-eip"
+  }
+}
+
+resource "aws_eip_association" "eip_assoc" {
+  count         = var.create_eip ? 1 : 0
+  instance_id   = aws_instance.default.id
+  allocation_id = aws_eip.eip[0].id
+}
