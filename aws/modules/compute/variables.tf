@@ -16,6 +16,7 @@ variable "subnet_id" {
 variable "key_name" {
   description = "The key pair name for SSH access"
   type        = string
+  default     = "devops"
 }
 
 variable "storage_size" {
@@ -44,11 +45,13 @@ variable "instance_name" {
 variable "environment" {
   description = "The environment where infrastructure is deployed"
   type        = string
+  default     = "production"
 }
 
 variable "roles" {
   description = "The roles associated with the instance"
   type        = string
+  default     = ""
 }
 
 variable "security_group_ids" {
