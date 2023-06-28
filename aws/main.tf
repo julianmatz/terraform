@@ -99,14 +99,6 @@ module "postgres" {
   volume_size         = 20
   security_group_id   = aws_security_group.allow_http_https.id
 }
-
-module "ui_backend" {
-  source              = "../modules/compute"
-  ami                 = data.aws_ami.debian.id
-  instance_type       = "t3.micro"
-  subnet_id           = aws_subnet.default.id
-  instance_name       = "ui_server"
-  volume_size         = 10
-  security_group_id   = aws_security_group.allow_http_https.id
-}
 */
+
+

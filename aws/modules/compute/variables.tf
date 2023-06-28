@@ -51,3 +51,7 @@ variable "roles" {
   type        = string
 }
 
+variable "security_group_ids" {
+  description = "List of IDs of the security groups to associate with the instance"
+  type        = list(string)
+}
