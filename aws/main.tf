@@ -100,5 +100,13 @@ module "postgres" {
   security_group_id   = aws_security_group.allow_http_https.id
 }
 */
-
+module "ui_backend" {
+  source              = "./modules/compute"
+  ami                 = data.aws_ami.debian.id
+  instance_type       = "t3.small"
+  subnet_id           = module.network.subnet_id
+  instance_name       = "ie-1.ui.lantern.cirrusinvicta.com"
+  volume_size         = 10
+  security_group_ids  = [module.http_https_sg.sg_id, module.ssh_sg.sg_id]
+}
 
