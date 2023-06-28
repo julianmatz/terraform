@@ -41,7 +41,7 @@ module "http_https_sg" {
 
   sg_name        = "allow-http-https"
   sg_description = "Allow inbound HTTP and HTTPS traffic"
-  vpc_id         = module.vpc.vpc_id
+  vpc_id         = module.network.vpc_id
   
   ingress_rules = [
     {
@@ -66,7 +66,7 @@ module "ssh_sg" {
 
   sg_name        = "allow-ssh"
   sg_description = "Allow inbound SSH traffic"
-  vpc_id         = module.vpc.vpc_id
+  vpc_id         = module.network.vpc_id
 
   ingress_rules = [
     {
