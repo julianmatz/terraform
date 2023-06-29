@@ -16,7 +16,7 @@ terraform {
 }
 
 provider "aws" {
-  alias  = "eu-west-1"
+  alias  = "eu_west_1"
   region = "eu-west-1"
 }
 
@@ -34,22 +34,54 @@ data "aws_ami" "debian" {
 
 ## NETWORKS
 
-module "network" {
-  source      = "./modules/network"
-  vpc_cidr    = "10.0.0.0/16"
-  vpc_name    = "terraform-default-vpc"
-  subnet_cidr = "10.0.1.0/24"
-  subnet_name = "terraform-default-subnet"
+locals {
+  vpc_cidrs = {
+    eu_west_1 = "10.0.0.0/16"
+    us_east_1 = "10.1.0.0/16"
+    // add additional regions and their respective CIDRs here...
+  }
+  subnet_cidrs = {
+    eu_west_1 = "10.0.1.0/24"
+    us_east_1 = "10.1.1.0/24"
+    // add additional regions and their respective CIDRs here...
+  }
+}
+
+resource "aws_vpc" "vpc" {
+  for_each = local.vpc_cidrs
+
+  providers  = { aws[each.key] }
+  cidr_block = each.value
+  tags = {
+    Name = "terraform-default-vpc-${each.key}"
+  }
+}
+
+resource "aws_subnet" "subnet" {
+  for_each = local.subnet_cidrs
+
+  providers  = { aws[each.key] }
+  vpc_id     = aws_vpc.vpc[each.key].id
+  cidr_block = each.value
+
+  tags = {
+    Name = "terraform-subnet-${each.key}"
+  }
 }
 
 ## SECURITY GROUPS
 
 module "http_https_sg" {
-  source = "./modules/security"
+  source   = "./modules/security"
+  for_each = var.regions
+
+  providers = {
+    aws = aws[each.key]
+  }
 
   sg_name        = "allow-http-https"
   sg_description = "Allow inbound HTTP and HTTPS traffic"
-  vpc_id         = module.network.vpc_id
+  vpc_id         = output.vpc_ids[each.key]
 
   ingress_rules = [
     {
@@ -70,11 +102,16 @@ module "http_https_sg" {
 }
 
 module "ssh_sg" {
-  source = "./modules/security"
+  source   = "./modules/security"
+  for_each = var.regions
+
+  providers = {
+    aws = aws[each.key]
+  }
 
   sg_name        = "allow-ssh"
   sg_description = "Allow inbound SSH traffic"
-  vpc_id         = module.network.vpc_id
+  vpc_id         = output.vpc_ids[each.key]
 
   ingress_rules = [
     {
@@ -102,11 +139,12 @@ module "postgres" {
 */
 module "ui_backend_ie1" {
   source             = "./modules/compute"
+  providers          = { aws = aws.eu_west_1 }
   ami                = data.aws_ami.debian.id
   instance_type      = "t3.small"
-  subnet_id          = module.network.subnet_id
+  subnet_id          = aws_subnet.subnet[eu_west_1].id
   instance_name      = "ie-1.ui.lantern.cirrusinvicta.com"
   volume_size        = 10
-  security_group_ids = [module.http_https_sg.sg_id, module.ssh_sg.sg_id]
+  security_group_ids = [module.http_https_sg[eu_west_1].sg_id, module.ssh_sg[eu_west_1].sg_id]
   create_eip         = true
 }
