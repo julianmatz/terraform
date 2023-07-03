@@ -15,24 +15,24 @@ variable "vpc_id" {
 
 variable "ingress_rules" {
   description = "A list of ingress rules"
-  type        = list(object({
+  type = list(object({
     description = string
     from_port   = number
     to_port     = number
     protocol    = string
     cidr_blocks = list(string)
   }))
-  default     = []
+  default = []
 }
 
 variable "egress_rules" {
   description = "A list of egress rules"
-  type        = list(object({
+  type = list(object({
     description = string
     from_port   = number
     to_port     = number
     protocol    = string
     cidr_blocks = list(string)
   }))
-  default     = []
+  default = []
 }

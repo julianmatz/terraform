@@ -39,95 +39,61 @@ data "aws_ami" "debian" {
 
 ## NETWORKS
 
-locals {
-  vpc_cidrs = {
-    eu_west_1 = "10.0.0.0/16"
-    us_east_1 = "10.1.0.0/16"
-    // add additional regions and their respective CIDRs here...
-  }
-  subnet_cidrs = {
-    eu_west_1 = "10.0.1.0/24"
-    us_east_1 = "10.1.1.0/24"
-    // add additional regions and their respective CIDRs here...
+resource "aws_vpc" "eu_west_1" {
+  providers  = { aws = aws.eu_west_1 }
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    Name = "terraform-vpc"
   }
 }
 
-resource "aws_vpc" "vpc" {
-  for_each = local.vpc_cidrs
-
-  providers  = { aws[each.key] }
-  cidr_block = each.value
+resource "aws_subnet" "eu_west_1" {
+  providers  = { aws = aws.eu_west_1 }
+  vpc_id     = aws_vpc.eu_west_1.id
+  cidr_block = "10.0.1.0/24"
   tags = {
-    Name = "terraform-default-vpc-${each.key}"
+    Name = "terraform-subnet-1"
   }
 }
 
-resource "aws_subnet" "subnet" {
-  for_each = local.subnet_cidrs
-
-  providers  = { aws[each.key] }
-  vpc_id     = aws_vpc.vpc[each.key].id
-  cidr_block = each.value
-
+resource "aws_vpc" "us_east_1" {
+  providers  = { aws = aws.us_east_1 }
+  cidr_block = "10.1.0.0/16"
   tags = {
-    Name = "terraform-subnet-${each.key}"
+    Name = "terraform-vpc"
+  }
+}
+
+resource "aws_subnet" "us_east_1" {
+  providers  = { aws = aws.us_east_1 }
+  vpc_id     = aws_vpc.us_east_1.id
+  cidr_block = "10.1.1.0/24"
+  tags = {
+    Name = "terraform-subnet-1"
   }
 }
 
 ## SECURITY GROUPS
 
-module "http_https_sg" {
-  source   = "./modules/security"
-  for_each = var.regions
+module "security_group_eu_west_1" {
+  source    = "./modules/security"
+  providers = { aws = aws.eu_west_1 }
 
-  providers = {
-    aws = aws[each.key]
-  }
-
-  sg_name        = "allow-http-https"
-  sg_description = "Allow inbound HTTP and HTTPS traffic"
-  vpc_id         = output.vpc_ids[each.key]
-
-  ingress_rules = [
-    {
-      description = "HTTPS"
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-    },
-    {
-      description = "HTTP"
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
+  vpc_id   = aws_vpc.vpc_eu_west_1.id
+  sg_rules = var.sg_rules
 }
 
-module "ssh_sg" {
-  source   = "./modules/security"
-  for_each = var.regions
+module "security_group_us_east_1" {
+  source    = "./modules/security"
+  providers = { aws = aws.us_east_1 }
 
-  providers = {
-    aws = aws[each.key]
-  }
-
-  sg_name        = "allow-ssh"
-  sg_description = "Allow inbound SSH traffic"
-  vpc_id         = output.vpc_ids[each.key]
-
-  ingress_rules = [
-    {
-      description = "SSH"
-      from_port   = 22
-      to_port     = 22
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
+  vpc_id   = aws_vpc.vpc_us_east_1.id
+  sg_rules = var.sg_rules
 }
+
+# Use security_group_eu_west_1.sg_id and security_group_us_east_1.sg_id 
+# wherever the security group ID is needed for other resources in the respective regions.
+
 
 ## COMPUTE INSTANCES
 
@@ -150,6 +116,6 @@ module "ui_backend_ie1" {
   subnet_id          = aws_subnet.subnet[eu_west_1].id
   instance_name      = "ie-1.ui.lantern.cirrusinvicta.com"
   volume_size        = 10
-  security_group_ids = [module.http_https_sg[eu_west_1].sg_id, module.ssh_sg[eu_west_1].sg_id]
+  security_group_ids = [module.security_group_eu_west_1.sg_id["ssh"], module.security_group_eu_west_1.sg_id["http_https"]]
   create_eip         = true
 }
