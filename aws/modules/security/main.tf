@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.6.2"
+    }
+  }
+}
+
 resource "aws_security_group" "sg" {
   for_each = var.sg_rules
 
@@ -17,4 +26,4 @@ resource "aws_security_group" "sg" {
       prefix_list_ids  = ingress.value["prefix_list_ids"]
     }
   }
-
+}
