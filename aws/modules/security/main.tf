@@ -10,7 +10,7 @@ terraform {
 resource "aws_security_group" "sg" {
   for_each = var.sg_rules
 
-  name        = "terraform-${each.key}"
+  name        = each.key
   description = "Security Group for ${each.key}"
   vpc_id      = var.vpc_id
 
