@@ -1,51 +1,40 @@
+# Terraform Infrastructure Overview
 
-# Terraform Infrastructure Repository
+This Terraform project provisions and manages a highly available, multi-region infrastructure on AWS. It uses the HashiCorp Configuration Language (HCL) and the AWS provider for Terraform.
 
-This repository contains Terraform configurations to manage infrastructure in multiple cloud providers like AWS, Google Cloud, Oracle Cloud, and NetCup.
+## High-Level Structure
 
-## Directory Structure
+The infrastructure primarily consists of resources spanning across multiple regions. Each region has its own Virtual Private Cloud (VPC), Internet Gateway (IGW), subnets, and EC2 instances. All of these components are isolated within each region.
 
-- `providers/` - Contains provider configuration files for each cloud service provider.
-- `plans/` - Contains individual Terraform configurations for different infrastructure components. 
+EC2 instances are created in each region with specific security group rules. An Elastic IP (EIP) is associated with each instance, and each instance can be optionally launched with an additional EBS volume.
 
-## Usage
+In addition, this project is set up to use Terraform modules, enabling reuse of common resource configurations. Each module defines a distinct set of related resources, such as EC2 instances or security groups.
 
-1. Define your cloud provider credentials as environment variables or in a `.tfvars` file. Do not commit your `.tfvars` file with secrets into version control.
+## Terraform Cloud
 
-2. Navigate to the directory of the infrastructure component you want to manage:
+Terraform Cloud is used as a remote backend for storing the Terraform state file and for running Terraform operations. 
 
-```bash
-cd plans/<infrastructure_component>
-```
+### State File Storage
 
-3. Initialize the Terraform working directory:
+Storing the state file remotely on Terraform Cloud provides several advantages including:
 
-```bash
-terraform init
-```
+- **State File Locking**: This prevents concurrent state operations, which can result in corrupt or inconsistent state files.
+- **Versioning**: Each change is versioned, allowing you to track and even revert changes if necessary.
+- **Security**: The state file, which can contain sensitive information, is stored securely in the cloud instead of locally.
+- **Sharing and Collaboration**: Team members can use the same state file, making collaboration easier.
 
-4. Create a new execution plan:
+### Runs Execution
 
-```bash
-terraform plan
-```
+Terraform Cloud also allows executing runs remotely. These runs are triggered whenever changes are pushed to the corresponding Git repository. This process includes:
 
-5. Apply the changes required to reach the desired state of the configuration:
+1. **Plan**: Terraform creates an execution plan detailing what it will do to reach the desired state of the infrastructure.
+2. **Apply**: After manual approval of the plan, Terraform applies the changes.
+3. **State Update**: The state file is updated to reflect the new infrastructure state.
+4. **Outputs: Once the infrastructure is successfully deployed, Terraform Cloud will display all the outputs that you have defined in your Terraform configuration. This provides a way to extract necessary details from the deployed infrastructure. The output values can also be accessed via the Terraform Cloud API for further automation tasks or CI/CD pipeline integrations.
+It's important to note that the output values are part of the state file and get updated whenever the state file changes.
 
-```bash
-terraform apply
-```
-
-## Providers
-
-- **AWS:** Configure your AWS access keys as environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`. The region is set to "us-west-2" by default in `providers/aws.tf`.
-
-- **Google Cloud, Oracle Cloud, NetCup:** Please refer to the respective `.tf` files in the `providers/` directory for configuration details.
-
-## Contributing
-
-When contributing to this repository, please first discuss the change you wish to make via issue or Slack with the owners of this repository.
+This workflow promotes Infrastructure as Code (IaC) best practices and enables a version-controlled, collaborative approach to infrastructure management. 
 
 ---
 
-Please adjust and expand this README.md according to your project's needs. This is just a starting point and does not cover all the details of your specific project.
+For more detailed information, please refer to individual Terraform files, which contain comments explaining the purpose and usage of each resource.
