@@ -52,7 +52,9 @@ resource "aws_subnet" "eu_west_1" {
   provider                        = aws.eu_west_1
   vpc_id                          = aws_vpc.eu_west_1.id
   cidr_block                      = "10.0.1.0/24"
+  map_public_ip_on_launch         = true
   assign_ipv6_address_on_creation = true # Assigns an IPv6 address to any instance created in this subnet
+  ipv6_cidr_block                 = cidrsubnet(aws_vpc.eu_west_1.ipv6_cidr_block, 8, 1)
   tags = {
     Name = "terraform-subnet-1"
   }
