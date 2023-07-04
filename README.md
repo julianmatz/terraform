@@ -30,7 +30,7 @@ Terraform Cloud also allows executing runs remotely. These runs are triggered wh
 1. **Plan**: Terraform creates an execution plan detailing what it will do to reach the desired state of the infrastructure.
 2. **Apply**: After manual approval of the plan, Terraform applies the changes.
 3. **State Update**: The state file is updated to reflect the new infrastructure state.
-4. **Outputs: Once the infrastructure is successfully deployed, Terraform Cloud will display all the outputs that you have defined in your Terraform configuration. This provides a way to extract necessary details from the deployed infrastructure. The output values can also be accessed via the Terraform Cloud API for further automation tasks or CI/CD pipeline integrations.
+4. **Outputs**: Once the infrastructure is successfully deployed, Terraform Cloud will display all the outputs that you have defined in your Terraform configuration. This provides a way to extract necessary details from the deployed infrastructure. The output values can also be accessed via the Terraform Cloud API for further automation tasks or CI/CD pipeline integrations.
 It's important to note that the output values are part of the state file and get updated whenever the state file changes.
 
 This workflow promotes Infrastructure as Code (IaC) best practices and enables a version-controlled, collaborative approach to infrastructure management. 
