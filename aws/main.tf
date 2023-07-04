@@ -40,17 +40,19 @@ data "aws_ami" "debian" {
 ## NETWORKS
 
 resource "aws_vpc" "eu_west_1" {
-  provider   = aws.eu_west_1
-  cidr_block = "10.0.0.0/16"
+  provider                         = aws.eu_west_1
+  cidr_block                       = "10.0.0.0/16"
+  assign_generated_ipv6_cidr_block = true # Enables IPv6 and assigns a CIDR block
   tags = {
     Name = "terraform-vpc"
   }
 }
 
 resource "aws_subnet" "eu_west_1" {
-  provider   = aws.eu_west_1
-  vpc_id     = aws_vpc.eu_west_1.id
-  cidr_block = "10.0.1.0/24"
+  provider                        = aws.eu_west_1
+  vpc_id                          = aws_vpc.eu_west_1.id
+  cidr_block                      = "10.0.1.0/24"
+  assign_ipv6_address_on_creation = true # Assigns an IPv6 address to any instance created in this subnet
   tags = {
     Name = "terraform-subnet-1"
   }
@@ -94,6 +96,16 @@ resource "aws_route" "internet_access" {
   route_table_id         = aws_vpc.eu_west_1.main_route_table_id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.eu_west_1.id
+}
+
+# Creates a route that points all IPv6 traffic (::/0) to the Internet Gateway
+resource "aws_route" "internet_access_ipv6" {
+  route_table_id              = aws_vpc.eu_west_1.main_route_table_id
+  destination_ipv6_cidr_block = "::/0"
+  gateway_id                  = aws_internet_gateway.eu_west_1.id
+  depends_on = [
+    aws_vpc.eu_west_1
+  ]
 }
 
 ## SECURITY GROUPS
