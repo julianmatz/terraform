@@ -34,8 +34,8 @@ resource "aws_instance" "default" {
 }
 
 resource "aws_eip" "eip" {
-  count = var.create_eip ? 1 : 0
-  vpc   = true
+  count  = var.create_eip ? 1 : 0
+  domain = "vpc"
 
   tags = {
     Name = "${var.instance_name}-eip"

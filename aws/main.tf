@@ -40,7 +40,7 @@ data "aws_ami" "debian" {
 ## NETWORKS
 
 resource "aws_vpc" "eu_west_1" {
-  providers  = { aws = aws.eu_west_1 }
+  provider   = aws.eu_west_1
   cidr_block = "10.0.0.0/16"
   tags = {
     Name = "terraform-vpc"
@@ -48,7 +48,7 @@ resource "aws_vpc" "eu_west_1" {
 }
 
 resource "aws_subnet" "eu_west_1" {
-  providers  = { aws = aws.eu_west_1 }
+  provider   = aws.eu_west_1
   vpc_id     = aws_vpc.eu_west_1.id
   cidr_block = "10.0.1.0/24"
   tags = {
@@ -57,7 +57,7 @@ resource "aws_subnet" "eu_west_1" {
 }
 
 resource "aws_vpc" "us_east_1" {
-  providers  = { aws = aws.us_east_1 }
+  provider   = aws.us_east_1
   cidr_block = "10.1.0.0/16"
   tags = {
     Name = "terraform-vpc"
@@ -65,7 +65,7 @@ resource "aws_vpc" "us_east_1" {
 }
 
 resource "aws_subnet" "us_east_1" {
-  providers  = { aws = aws.us_east_1 }
+  provider   = aws.us_east_1
   vpc_id     = aws_vpc.us_east_1.id
   cidr_block = "10.1.1.0/24"
   tags = {
@@ -79,7 +79,7 @@ module "security_group_eu_west_1" {
   source    = "./modules/security"
   providers = { aws = aws.eu_west_1 }
 
-  vpc_id   = aws_vpc.vpc_eu_west_1.id
+  vpc_id   = aws_vpc.eu_west_1.id
   sg_rules = var.sg_rules
 }
 
@@ -87,7 +87,7 @@ module "security_group_us_east_1" {
   source    = "./modules/security"
   providers = { aws = aws.us_east_1 }
 
-  vpc_id   = aws_vpc.vpc_us_east_1.id
+  vpc_id   = aws_vpc.us_east_1.id
   sg_rules = var.sg_rules
 }
 
@@ -113,7 +113,7 @@ module "ui_backend_ie1" {
   providers          = { aws = aws.eu_west_1 }
   ami                = data.aws_ami.debian.id
   instance_type      = "t3.small"
-  subnet_id          = aws_subnet.subnet[eu_west_1].id
+  subnet_id          = aws_subnet.eu_west_1.id
   instance_name      = "ie-1.ui.lantern.cirrusinvicta.com"
   volume_size        = 10
   security_group_ids = [module.security_group_eu_west_1.sg_id["ssh"], module.security_group_eu_west_1.sg_id["http_https"]]
