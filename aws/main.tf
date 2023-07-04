@@ -73,6 +73,22 @@ resource "aws_subnet" "us_east_1" {
   }
 }
 
+resource "aws_internet_gateway" "eu_west_1" {
+  vpc_id   = aws_vpc.vpc_eu_west_1.id
+  provider = aws.eu_west_1
+  tags = {
+    Name = "main"
+  }
+}
+
+resource "aws_internet_gateway" "us_east_1" {
+  vpc_id   = aws_vpc.vpc_us_east_1.id
+  provider = aws.us_east_1
+  tags = {
+    Name = "main"
+  }
+}
+
 ## SECURITY GROUPS
 
 module "security_group_eu_west_1" {
@@ -114,6 +130,7 @@ module "ui_backend_ie1" {
   ami                = data.aws_ami.debian.id
   instance_type      = "t3.small"
   subnet_id          = aws_subnet.eu_west_1.id
+  igw_id             = aws_internet_gateway.eu_west_1.id
   instance_name      = "ie-1.ui.lantern.cirrusinvicta.com"
   volume_size        = 15
   security_group_ids = [module.security_group_eu_west_1.sg_id["ssh"], module.security_group_eu_west_1.sg_id["http_https"]]
