@@ -115,7 +115,7 @@ module "ui_backend_ie1" {
   instance_type      = "t3.small"
   subnet_id          = aws_subnet.eu_west_1.id
   instance_name      = "ie-1.ui.lantern.cirrusinvicta.com"
-  volume_size        = 10
+  volume_size        = 15
   security_group_ids = [module.security_group_eu_west_1.sg_id["ssh"], module.security_group_eu_west_1.sg_id["http_https"]]
   create_eip         = true
 }
