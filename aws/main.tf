@@ -89,6 +89,13 @@ resource "aws_internet_gateway" "us_east_1" {
   }
 }
 
+# Creates a route that points all traffic (0.0.0.0/0) to the Internet Gateway
+resource "aws_route" "internet_access" {
+  route_table_id         = aws_vpc.eu_west_1.main_route_table_id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.eu_west_1.id
+}
+
 ## SECURITY GROUPS
 
 module "security_group_eu_west_1" {
