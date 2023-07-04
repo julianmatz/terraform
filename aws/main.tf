@@ -74,7 +74,7 @@ resource "aws_subnet" "us_east_1" {
 }
 
 resource "aws_internet_gateway" "eu_west_1" {
-  vpc_id   = aws_vpc.vpc_eu_west_1.id
+  vpc_id   = aws_vpc.eu_west_1.id
   provider = aws.eu_west_1
   tags = {
     Name = "main"
@@ -82,7 +82,7 @@ resource "aws_internet_gateway" "eu_west_1" {
 }
 
 resource "aws_internet_gateway" "us_east_1" {
-  vpc_id   = aws_vpc.vpc_us_east_1.id
+  vpc_id   = aws_vpc.us_east_1.id
   provider = aws.us_east_1
   tags = {
     Name = "main"

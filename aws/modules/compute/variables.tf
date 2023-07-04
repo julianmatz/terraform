@@ -8,11 +8,6 @@ variable "instance_type" {
   type        = string
 }
 
-variable "subnet_id" {
-  description = "The ID of the subnet to associate with the instance"
-  type        = string
-}
-
 variable "key_name" {
   description = "The key pair name for SSH access"
   type        = string
@@ -57,6 +52,17 @@ variable "roles" {
 variable "security_group_ids" {
   description = "List of IDs of the security groups to associate with the instance"
   type        = list(string)
+}
+
+variable "igw_id" {
+  description = "ID of the Internet Gateway"
+  type        = string
+  default     = null
+}
+
+variable "subnet_id" {
+  description = "The ID of the subnet to associate with the instance"
+  type        = string
 }
 
 variable "create_eip" {
