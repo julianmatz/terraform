@@ -13,8 +13,7 @@ resource "aws_instance" "default" {
   subnet_id     = var.subnet_id
   key_name      = var.key_name
 
-  ebs_block_device {
-    device_name = "/dev/sda1"
+  root_block_device {
     volume_size = var.volume_size
     volume_type = "gp3"
     throughput  = var.throughput
